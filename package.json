@@ -24,5 +24,14 @@
   "bugs": {
     "url": "https://github.com/SamVerschueren/aws-lambda-image-auto-orient/issues"
   },
-  "homepage": "https://github.com/SamVerschueren/aws-lambda-image-auto-orient"
+  "homepage": "https://github.com/SamVerschueren/aws-lambda-image-auto-orient",
+  "devDependencies": {
+    "aws-sdk": "^2.1.44",
+    "gulp": "^3.9.0",
+    "gulp-zip": "^3.0.2"
+  },
+  "dependencies": {
+    "gm": "^1.18.1",
+    "q": "^1.4.1"
+  }
 }
