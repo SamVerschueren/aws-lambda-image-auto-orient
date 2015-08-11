@@ -1,0 +1,28 @@
+{
+  "name": "aws-lambda-image-auto-orient",
+  "version": "0.0.1",
+  "description": "Microservice that auto orientates jpeg images according to the EXIF data.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "zip": "./node_modules/.bin/gulp zip"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SamVerschueren/aws-lambda-image-auto-orient.git"
+  },
+  "keywords": [
+    "aws",
+    "lambda",
+    "auto",
+    "orientation",
+    "exif",
+    "s3"
+  ],
+  "author": "Sam Verschueren",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SamVerschueren/aws-lambda-image-auto-orient/issues"
+  },
+  "homepage": "https://github.com/SamVerschueren/aws-lambda-image-auto-orient"
+}
