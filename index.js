@@ -17,7 +17,8 @@ var AWS = require('aws-sdk'),
 var s3 = new AWS.S3();
 
 // Only handle jpeg images
-var WHITELIST = ['image/jpeg', 'image/jpg'];
+var WHITELIST = ['image/jpeg', 'image/jpg'],
+    DEST_DIR = 'raw';
 
 /**
  * Main entrypoint of the service.
@@ -34,24 +35,27 @@ exports.handler = function(event, context) {
         return getObject({Bucket: bucket, Key: source});
     }).then(function(response) {
         if(WHITELIST.indexOf(response.ContentType) === -1) {
-            // If the mimetype is not in the whitelist, throw an error
-            throw new TypeError('We should only handle jpeg images.');
+            // If we should not auto orient, just return the content type and the body
+            return [response.ContentType, response.Body];
         }
         
         // Scale and crop the image
         return [response.ContentType, autoOrient(response.Body)];
-    }).spread(function(contentType, buffer) {        
+    }).spread(function(contentType, buffer) {
+        // Determine the destination of the auto orient file
+        var dest = source.split('/');
+        dest.shift();
+        dest.unshift(DEST_DIR);
+        
         // Overwrite the original file with the auto oriented file
-        return putObject({Bucket: bucket, Key: source, Body: buffer, ContentType: contentType});
+        return putObject({Bucket: bucket, Key: dest.join('/'), Body: buffer, ContentType: contentType});
+    }).then(function() {
+        // Remove the original file
+        return deleteObject({Bucket: bucket, Key: source});
     }).then(function() {
         // Everything went well
         context.succeed();
     }).catch(function(err) {
-        if(err instanceof TypeError) {
-            // If the error is a type error, it means we don't have to handler the image so the function should succeed
-            return context.succeed();
-        }
-        
         // Log the error
         console.error(err);
         
@@ -78,6 +82,21 @@ exports.handler = function(event, context) {
         return Q.Promise(function(resolve, reject) {
             // Retrieve the object
             s3.putObject(obj, function(err, result) {
+                if(err) {
+                    // Reject because something went wrong
+                    return reject(err);
+                }
+                
+                // We retrieved the object successfully
+                resolve(result);
+            });
+        });
+    };
+    
+    function deleteObject(obj) {
+        return Q.Promise(function(resolve, reject) {
+            // Retrieve the object
+            s3.deleteObject(obj, function(err, result) {
                 if(err) {
                     // Reject because something went wrong
                     return reject(err);
