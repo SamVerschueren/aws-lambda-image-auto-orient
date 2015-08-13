@@ -116,12 +116,9 @@ exports.handler = function(event, context) {
             // Orient the image depending on EXIF data
             gm(img).autoOrient().toBuffer(function(err, buffer) {
                 if(err) {
-                    console.log('an error occurred');
                     // Reject the promise if an error occurred
                     return reject(err);
                 }
-                
-                console.log('buffer created');
                 
                 // Resolve the buffer if everything went well
                 resolve(buffer);
