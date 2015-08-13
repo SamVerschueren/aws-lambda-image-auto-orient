@@ -34,7 +34,7 @@ exports.handler = function(event, context) {
         // Retrieve the object
         return getObject({Bucket: bucket, Key: source});
     }).then(function(response) {
-        if(WHITELIST.indexOf(response.ContentType) === -1) {
+        if(WHITELIST.indexOf(response.ContentType.split(';').shift()) === -1) {
             // If we should not auto orient, just return the content type and the body
             return [response.ContentType, response.Body];
         }
