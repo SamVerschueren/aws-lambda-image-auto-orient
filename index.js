@@ -34,11 +34,9 @@ exports.handler = function(event, context) {
         // Retrieve the object
         return getObject({Bucket: bucket, Key: source});
     }).then(function(response) {
-        console.log(response.ContentType);
-        console.log(response.ContentType.split(';').shift());
-        
         if(WHITELIST.indexOf(response.ContentType.split(';').shift()) === -1) {
-            
+            // Log it to cloudwatch
+            console.log('This image should not be orientated.');
             
             // If we should not auto orient, just return the content type and the body
             return [response.ContentType, response.Body];
@@ -47,6 +45,8 @@ exports.handler = function(event, context) {
         // Scale and crop the image
         return [response.ContentType, autoOrient(response.Body)];
     }).spread(function(contentType, buffer) {
+        console.lob(buffer);
+        
         // Determine the destination of the auto orient file
         var dest = source.split('/');
         dest.shift();
@@ -118,9 +118,12 @@ exports.handler = function(event, context) {
             // Orient the image depending on EXIF data
             gm(img).autoOrient().toBuffer(function(err, buffer) {
                 if(err) {
+                    console.log('an error occurred');
                     // Reject the promise if an error occurred
                     return reject(err);
                 }
+                
+                console.log('buffer created');
                 
                 // Resolve the buffer if everything went well
                 resolve(buffer);
