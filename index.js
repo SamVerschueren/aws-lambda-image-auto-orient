@@ -45,8 +45,6 @@ exports.handler = function(event, context) {
         // Scale and crop the image
         return [response.ContentType, autoOrient(response.Body)];
     }).spread(function(contentType, buffer) {
-        console.lob(buffer);
-        
         // Determine the destination of the auto orient file
         var dest = source.split('/');
         dest.shift();
@@ -116,7 +114,7 @@ exports.handler = function(event, context) {
     function autoOrient(img) {
         return Q.Promise(function(resolve, reject) {
             // Orient the image depending on EXIF data
-            gm(img).setFormat('jpg').autoOrient().toBuffer(function(err, buffer) {
+            gm(img).autoOrient().toBuffer(function(err, buffer) {
                 if(err) {
                     console.log('an error occurred');
                     // Reject the promise if an error occurred
