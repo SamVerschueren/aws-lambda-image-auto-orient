@@ -116,7 +116,7 @@ exports.handler = function(event, context) {
     function autoOrient(img) {
         return Q.Promise(function(resolve, reject) {
             // Orient the image depending on EXIF data
-            gm(img).autoOrient().toBuffer(function(err, buffer) {
+            gm(img).setFormat('jpg').autoOrient().toBuffer(function(err, buffer) {
                 if(err) {
                     console.log('an error occurred');
                     // Reject the promise if an error occurred
